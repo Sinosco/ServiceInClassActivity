@@ -1,7 +1,11 @@
 package edu.temple.basictimer
 
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.Button
 import android.widget.TextView
 
@@ -19,16 +23,50 @@ class MainActivity : AppCompatActivity() {
         findViewById(R.id.textView)
     }
 
+    var timerBinder: TimerService.TimerBinder? = null //can check and use as a gate, if have binder invoke if not then dont
+                                                        // have binder when connected to service
+
+    val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(
+            p0: ComponentName?,
+            p1: IBinder?
+        ) {
+            timerBinder = p1 as TimerService.TimerBinder
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            timerBinder = null
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startButton.setOnClickListener {
+        bindService(
+            Intent(this, TimerService.TimerBinder::class.java),
+            serviceConnection,
+            BIND_AUTO_CREATE
+        )
 
+        startButton.setOnClickListener {
+            timerBinder?.run{
+                //start(100) //same as timerBinder?.start()
+                if(!isRunning){
+                    start(100)
+                    startButton.text = "Pause"
+                }
+                else{
+                    pause()
+                    startButton.text = if (isPaused) "Resume" else "Pause"
+
+                }
+            }
         }
         
         stopButton.setOnClickListener {
-
+            timerBinder?.stop()
+            startButton.text = "Start"
         }
     }
 }
