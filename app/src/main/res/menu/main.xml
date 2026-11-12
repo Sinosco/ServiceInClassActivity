@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_start_timer"
+        android:icon="@android:drawable/btn_star"
+        android:title="Start"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_stop_timer"
+        android:icon="@android:drawable/ic_delete"
+        android:title="Stop"
+        app:showAsAction="ifRoom" />
+</menu>
